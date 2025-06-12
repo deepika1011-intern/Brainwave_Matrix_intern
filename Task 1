@@ -1,0 +1,102 @@
+from datetime import date
+
+bank_master = {}
+bank_trans = []
+
+while True:
+    print("\n========= ATM Menu =========")
+    print("1. Create account")
+    print("2. Deposit money")
+    print("3. Withdraw money")
+    print("4. Display account")
+    print("5. Search person by starting letter")
+    print("6. Exit")
+    
+    try:
+        ch = int(input("Enter your choice: "))
+    except ValueError:
+        print("Invalid input. Enter a number.")
+        continue
+
+    if ch == 1:
+        print("\n--- Create Account ---")
+        acno = input("Enter account number (4 digits): ").strip()
+        if acno in bank_master:
+            print("Account already exists.")
+            continue
+        name = input("Enter name (max 30 characters): ").strip()
+        city = input("Enter city: ").strip()
+        mobile = input("Enter 10-digit mobile number: ").strip()
+        balance = 0
+        bank_master[acno] = {"name": name, "city": city, "mobile": mobile, "balance": balance}
+        print("Account created successfully!")
+
+    elif ch == 2:
+        print("\n--- Deposit Money ---")
+        acno = input("Enter account number: ").strip()
+        if acno not in bank_master:
+            print("Account not found.")
+            continue
+        try:
+            amount = int(input("Enter amount to deposit: "))
+        except ValueError:
+            print("Invalid amount.")
+            continue
+        dot = input("Enter date (YYYY-MM-DD): ").strip()
+        bank_master[acno]["balance"] += amount
+        bank_trans.append({"acno": acno, "amount": amount, "dot": dot, "ttype": "d"})
+        print("Deposit successful.")
+
+    elif ch == 3:
+        print("\n--- Withdraw Money ---")
+        acno = input("Enter account number: ").strip()
+        if acno not in bank_master:
+            print("Account not found.")
+            continue
+        try:
+            amount = int(input("Enter amount to withdraw: "))
+        except ValueError:
+            print("Invalid amount.")
+            continue
+        if bank_master[acno]["balance"] < amount:
+            print("Insufficient balance.")
+            continue
+        dot = input("Enter date (YYYY-MM-DD): ").strip()
+        bank_master[acno]["balance"] -= amount
+        bank_trans.append({"acno": acno, "amount": amount, "dot": dot, "ttype": "w"})
+        print("Withdrawal successful.")
+
+    elif ch == 4:
+        print("\n--- Display Account ---")
+        acno = input("Enter account number: ").strip()
+        if acno not in bank_master:
+            print("Account not found.")
+            continue
+        acc = bank_master[acno]
+        print("Account Number:", acno)
+        print("Name:", acc["name"])
+        print("City:", acc["city"])
+        print("Mobile Number:", acc["mobile"])
+        print("Balance:", acc["balance"])
+
+    elif ch == 5:
+        print("\n--- Search by Name ---")
+        letter = input("Enter starting letter of name: ").strip().lower()
+        found = False
+        for ac, acc in bank_master.items():
+            if acc["name"].lower().startswith(letter):
+                found = True
+                print("\nAccount Number:", ac)
+                print("Name:", acc["name"])
+                print("City:", acc["city"])
+                print("Mobile Number:", acc["mobile"])
+                print("Balance:", acc["balance"])
+        if not found:
+            print("No matching account found.")
+
+    elif ch == 6:
+        print("Exiting program. Goodbye!")
+        break
+
+    else:
+        print("Invalid choice. Please select from 1 to 6.")
